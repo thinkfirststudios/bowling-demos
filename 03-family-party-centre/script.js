@@ -1,88 +1,106 @@
-/* PINFALL PARK — fictional demo. DEMO — ThinkFirst Studios · [Your name here]
-   Motion character: a rack drops and settles — apex down, row by row, once. Nothing bounces, glows, cycles or falls over.
-   The header rack minimap fills the current pin instantly. Booking steps cross-fade; the minimap advances one position per step.
-   Count-up only on the party estimate (headcount × per head, 320ms), labelled [ESTIMATE — BASED ON PLACEHOLDER PRICING]. */
+/* Bowling demo (fictional) — DEMO — ThinkFirst Studios · [Your name here]
+   Slider crossfades every 6s (paused on hover/focus, off under reduced motion). Reveals on scroll. No flashing effects. */
 (function () {
-  var root = document.documentElement;
-  root.classList.add("js");
+  var root = document.documentElement; root.classList.add("js");
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!reduce && "IntersectionObserver" in window) root.classList.add("js-motion");
-  document.querySelectorAll("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
-  var today = new Date().getDay();
-  document.querySelectorAll('tr[data-day="' + today + '"]').forEach(function (tr) { tr.classList.add("is-today"); });
+  document.querySelectorAll("[data-year]").forEach(function (e) { e.textContent = new Date().getFullYear(); });
+  var day = new Date().getDay();
+  document.querySelectorAll('tr[data-day="' + day + '"]').forEach(function (t) { t.classList.add("is-today"); });
+  document.querySelectorAll("[data-today]").forEach(function (e) { var h = JSON.parse(e.getAttribute("data-today")); e.textContent = h[day]; });
 
-  var head = document.querySelector("[data-head]"), btn = document.querySelector(".menu-btn"), nav = document.getElementById("site-nav");
+  var head = document.querySelector(".site-head"), btn = document.querySelector(".menu-btn"), nav = document.getElementById("site-nav"), top = document.querySelector(".to-top");
   if (btn && nav) {
     btn.addEventListener("click", function () {
       nav.style.setProperty("--nav-top", head.getBoundingClientRect().bottom + "px");
-      var o = nav.classList.toggle("is-open"); btn.setAttribute("aria-expanded", o ? "true" : "false"); btn.textContent = o ? "Close" : "Menu";
+      var o = nav.classList.toggle("is-open"); btn.setAttribute("aria-expanded", o); btn.textContent = o ? "Close" : "Menu";
     });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && nav.classList.contains("is-open")) { btn.click(); btn.focus(); } });
   }
-
-  // Header minimap: the current pin section
-  var mm = head ? head.querySelector(".minimap") : null, pins = document.querySelectorAll("[data-pin]");
-  function onScroll() {
-    if (head) head.classList.toggle("is-condensed", window.scrollY > 80);
-    if (!mm || !pins.length) return;
-    var cur = 0, line = window.innerHeight * 0.35;
-    pins.forEach(function (s) { if (s.getBoundingClientRect().top < line) cur = +s.getAttribute("data-pin"); });
-    mm.querySelectorAll("polygon").forEach(function (p) { p.classList.toggle("on", +p.getAttribute("data-mm") === cur); });
-  }
+  function onScroll() { var y = window.scrollY; if (head) head.classList.toggle("is-condensed", y > 40); if (top) top.classList.toggle("show", y > 700); }
   window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  if (top) top.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); });
 
-  if (root.classList.contains("js-motion")) {
-    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } }); }, { rootMargin: "0px 0px -6% 0px", threshold: 0.05 });
-    document.querySelectorAll(".rv, .rv-up").forEach(function (el) { io.observe(el); });
-  }
+  // reveals
+  var rv = document.querySelectorAll(".rv, .rv-l, .rv-r, .rv-z");
+  if (!reduce && "IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } }); }, { rootMargin: "0px 0px -8% 0px", threshold: .08 });
+    rv.forEach(function (e) { io.observe(e); });
+  } else rv.forEach(function (e) { e.classList.add("is-in"); });
 
-  function money(n) { return "$[" + Math.round(n) + "]"; }
-  // Five-step deposit flow
-  document.querySelectorAll("[data-book]").forEach(function (f) {
-    var steps = f.querySelectorAll(".bstep"), prev = f.querySelector("[data-prev]"), next = f.querySelector("[data-next]"),
-      lab = f.querySelector("[data-steplabel]"), marks = f.querySelectorAll(".steprack polygon"), out = f.querySelector("[data-out]"), n = f.querySelector("[data-n]"), cur = 0, last = null;
-    var q = new URLSearchParams(location.search).get("pkg");
-    if (q) { var r = f.querySelector('input[name="pkg"][value="' + q + '"]'); if (r) r.checked = true; }
-    function show(i) {
-      cur = i;
-      steps.forEach(function (s, k) { s.hidden = k !== i; if (k === i && root.classList.contains("js-motion")) { s.style.opacity = 0; requestAnimationFrame(function () { s.style.opacity = 1; }); } });
-      marks.forEach(function (m, k) { m.classList.toggle("on", k <= i); });
-      lab.textContent = "Step " + (i + 1) + " of 5";
-      prev.disabled = i === 0; next.hidden = i === steps.length - 1;
-      var first = steps[i].querySelector("input, select"); if (first && i > 0) first.focus();
+  // hero slider
+  document.querySelectorAll("[data-slider]").forEach(function (s) {
+    var slides = s.querySelectorAll(".slide"), copy = s.querySelectorAll(".hero-slide-copy"), dots = s.querySelectorAll(".dots button"), cur = 0, timer = null;
+    function go(i) {
+      cur = (i + slides.length) % slides.length;
+      slides.forEach(function (x, k) { x.classList.toggle("is-on", k === cur); x.setAttribute("aria-hidden", k !== cur); });
+      copy.forEach(function (x, k) { x.classList.toggle("is-on", k === cur); });
+      dots.forEach(function (x, k) { x.setAttribute("aria-current", k === cur); });
     }
-    prev.addEventListener("click", function () { show(Math.max(0, cur - 1)); });
-    next.addEventListener("click", function () {
-      var bad = false;
-      steps[cur].querySelectorAll("[required]").forEach(function (r) { var b = !String(r.value).trim(); r.setAttribute("aria-invalid", b ? "true" : "false"); if (b) bad = true; });
-      if (bad) { steps[cur].querySelector('[aria-invalid="true"]').focus(); return; }
-      show(Math.min(steps.length - 1, cur + 1));
-    });
-    function est() {
-      var pk = f.querySelector('input[name="pkg"]:checked'), per = pk ? parseFloat(pk.getAttribute("data-price")) : 24, total = Math.max(1, +n.value || 1) * per;
-      var from = last === null ? total : last; last = total;
-      if (!root.classList.contains("js-motion") || from === total) { out.textContent = money(total); return; }
-      var st = null;
-      (function step(ts) { if (!st) st = ts; var p = Math.min(1, (ts - st) / 320), e = 1 - Math.pow(1 - p, 3); out.textContent = money(from + (total - from) * e); if (p < 1) requestAnimationFrame(step); })(performance.now());
-    }
-    f.addEventListener("input", est); f.addEventListener("change", est); est(); show(0);
+    function play() { if (!reduce && !timer) timer = setInterval(function () { go(cur + 1); }, 6500); }
+    function stop() { clearInterval(timer); timer = null; }
+    s.querySelector("[data-prev]").addEventListener("click", function () { go(cur - 1); });
+    s.querySelector("[data-next]").addEventListener("click", function () { go(cur + 1); });
+    dots.forEach(function (d, k) { d.addEventListener("click", function () { go(k); }); });
+    s.addEventListener("mouseenter", stop); s.addEventListener("mouseleave", play);
+    s.addEventListener("focusin", stop); s.addEventListener("focusout", play);
+    go(0); play();
   });
 
-  // Mock forms
-  document.querySelectorAll("form[data-mock]").forEach(function (form) {
+  // tab sets (menus, league sign-up paths)
+  document.querySelectorAll("[data-tabset]").forEach(function (box) {
+    var tabs = box.querySelectorAll('[role="tab"]');
+    function sel(t) { tabs.forEach(function (x) { var on = x === t; x.setAttribute("aria-selected", on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute("aria-controls")).hidden = !on; }); }
+    tabs.forEach(function (t, i) {
+      t.addEventListener("click", function () { sel(t); });
+      t.addEventListener("keydown", function (e) { var k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0; if (k) { e.preventDefault(); var n = tabs[(i + k + tabs.length) % tabs.length]; sel(n); n.focus(); } });
+    });
+  });
+
+  function money(n) { return "$" + n.toFixed(2).replace(/\.00$/, ""); }
+  // estimators: data-calc="league|lane|party"
+  document.querySelectorAll("[data-calc]").forEach(function (f) {
+    var kind = f.getAttribute("data-calc");
+    function v(sel) { var e = f.querySelector(sel); return e ? e : null; }
+    function run() {
+      if (kind === "league") {
+        var b = +v("[name=bowlers]").value, w = +v("[name=weeks]").value || 32, fee = 19;
+        v("[data-o1]").textContent = money(fee * w); v("[data-out]").textContent = money(fee * w * b);
+      } else if (kind === "lane") {
+        var lanes = +(f.querySelector("[name=lanes]:checked") || {}).value || 1, blk = f.querySelector("[name=block]:checked"), hrs = +v("[name=hours]").value,
+            rate = blk ? +blk.getAttribute("data-rate") : 60, min = blk ? +blk.getAttribute("data-min") : 150, people = +v("[name=party]").value || 1;
+        v("[data-hire]").textContent = money(lanes * hrs * rate); v("[data-min]").textContent = money(lanes * min);
+        var need = Math.ceil(people / 6);
+        v("[data-fit]").textContent = need > lanes ? people + " guests need " + need + " lanes (6 per lane)" : people + " guests fit on " + lanes + " lane" + (lanes > 1 ? "s" : "");
+      } else if (kind === "party") {
+        var p = f.querySelector("[name=pkg]:checked"), per = p ? +p.getAttribute("data-price") : 25.99, n = Math.max(8, +v("[name=guests]").value || 8);
+        v("[data-per]").textContent = money(per); v("[data-out]").textContent = money(per * n); v("[data-bal]").textContent = money(Math.max(0, per * n - 75));
+      }
+    }
+    f.addEventListener("input", run); f.addEventListener("change", run); run();
+  });
+
+  // multi-step booking
+  document.querySelectorAll("[data-steps]").forEach(function (f) {
+    var steps = f.querySelectorAll(".bstep"), bars = f.querySelectorAll(".steps span"), prev = f.querySelector("[data-back]"), next = f.querySelector("[data-fwd]"), cur = 0;
+    function show(i) { cur = i; steps.forEach(function (s, k) { s.hidden = k !== i; }); bars.forEach(function (b, k) { b.classList.toggle("on", k <= i); }); prev.disabled = i === 0; next.hidden = i === steps.length - 1; }
+    prev.addEventListener("click", function () { show(Math.max(0, cur - 1)); });
+    next.addEventListener("click", function () {
+      var bad = null; steps[cur].querySelectorAll("[required]").forEach(function (r) { var b = !String(r.value).trim(); r.setAttribute("aria-invalid", b); if (b && !bad) bad = r; });
+      if (bad) { bad.focus(); return; } show(Math.min(steps.length - 1, cur + 1));
+    });
+    show(0);
+  });
+
+  // forms (demo)
+  document.querySelectorAll("form[data-demo]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var ok = true;
-      form.querySelectorAll("[required]").forEach(function (fl) {
-        var id = fl.id + "-err", err = document.getElementById(id);
-        var bad = !String(fl.value).trim() || (fl.type === "email" && !/^\S+@\S+\.\S+$/.test(fl.value));
-        fl.setAttribute("aria-invalid", bad ? "true" : "false");
-        if (bad) { ok = false; if (!err) { err = document.createElement("p"); err.className = "err"; err.id = id; err.textContent = fl.type === "email" ? "Enter a valid email address." : "Please fill this in."; fl.insertAdjacentElement("afterend", err); fl.setAttribute("aria-describedby", id); } }
-        else if (err) { err.remove(); fl.removeAttribute("aria-describedby"); }
+      e.preventDefault(); var bad = null;
+      form.querySelectorAll("[required]").forEach(function (r) {
+        var b = !String(r.value).trim() || (r.type === "email" && !/^\S+@\S+\.\S+$/.test(r.value)); r.setAttribute("aria-invalid", b);
+        if (b && !bad) bad = r;
       });
-      if (!ok) { var first = form.querySelector('[aria-invalid="true"]'); var st = first && first.closest(".bstep"); if (st && st.hidden) form.querySelectorAll(".bstep").forEach(function (s) { s.hidden = s !== st; }); if (first) first.focus(); return; }
-      var s = form.querySelector(".form-status"); s.hidden = false;
-      s.textContent = "Demo only. Nothing was booked, sent or charged. [BOOKING / PAYMENT SYSTEM — CONFIRM]"; s.focus();
+      if (bad) { var st = bad.closest(".bstep"); if (st && st.hidden) form.querySelectorAll(".bstep").forEach(function (s) { s.hidden = s !== st; }); bad.focus(); return; }
+      var s = form.querySelector(".form-status"); s.hidden = false; s.textContent = form.getAttribute("data-ok") + " (Demo site: nothing was sent or charged.)"; s.focus();
     });
   });
 })();

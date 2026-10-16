@@ -1,18 +1,26 @@
 # Image credits — 01-league-house (FICTIONAL DEMO)
 
-Every image is a real photograph from Pexels (Pexels licence: commercial use allowed, no attribution required). No AI-generated image, no illustration standing in for a photograph. Resized, graded and converted to WebP. **Replace every one before any real use.** Checked by eye for: no children or minors in any form, no people where the slot says none, no drink in a frame with a lane, ball, pin or shoes, and legible equipment, venue, game-cabinet and console marks blurred.
+Real Pexels photographs (free licence). No AI images. Adults only; no children in any image. Legible brand marks blurred. Replace before any real use.
 
 | Slot | Source | Subject |
 |---|---|---|
-| `hero` | Pexels 7429597 — https://www.pexels.com/photo/7429597/ | hero — a lit lane in perspective, empty |
-| `pin-deck` | Pexels 7429588 — https://www.pexels.com/photo/7429588/ | pin deck, pins racked |
-| `ball-return` | Pexels 7429395 — https://www.pexels.com/photo/7429395/ | ball return and house balls |
-| `balls-racked` | Pexels 7429403 — https://www.pexels.com/photo/7429403/ | house balls racked by colour |
-| `shoes-shelf` | Pexels 5952942 — https://www.pexels.com/photo/5952942/ | rental shoes and a house ball, stand-in for the shoe shelf |
-| `scoring-monitors` | Pexels 7429597 — https://www.pexels.com/photo/7429597/ | the scorers above the lanes, no names |
-| `pro-shop` | Pexels 4889150 — https://www.pexels.com/photo/4889150/ | pro shop bench and drill press, stand-in, no people |
-| `grill-counter` | Pexels 18665391 — https://www.pexels.com/photo/18665391/ | the grill counter, stand-in, no people |
-| `pit-seating` | Pexels 37305880 — https://www.pexels.com/photo/37305880/ | seating, stand-in for the pit, no people |
-| `groups` | Pexels 3634678 — https://www.pexels.com/photo/3634678/ | a table laid for a group, no people, no cake |
-| `exterior` | Pexels 858973 — https://www.pexels.com/photo/858973/ | brick exterior, no legible centre name |
-| `cosmic` | Pexels 12789438 — https://www.pexels.com/photo/12789438/ | cosmic session lighting, no people |
+| `s1` | Pexels 7429722 — https://www.pexels.com/photo/7429722/ | bowler on the approach |
+| `s2` | Pexels 7429597 — https://www.pexels.com/photo/7429597/ | the lanes |
+| `s3` | Pexels 7429508 — https://www.pexels.com/photo/7429508/ | friends bowling |
+| `intro` | Pexels 7429621 — https://www.pexels.com/photo/7429621/ | league night |
+| `band` | Pexels 7429395 — https://www.pexels.com/photo/7429395/ | ball return |
+| `c-lanes` | Pexels 7429588 — https://www.pexels.com/photo/7429588/ | the lanes |
+| `c-pro` | Pexels 4889150 — https://www.pexels.com/photo/4889150/ | pro shop |
+| `c-grill` | Pexels 33253821 — https://www.pexels.com/photo/33253821/ | the grill |
+| `c-cosmic` | Pexels 19191084 — https://www.pexels.com/photo/19191084/ | cosmic bowling |
+| `t-leagues` | Pexels 7429616 — https://www.pexels.com/photo/7429616/ | leagues |
+| `t-open` | Pexels 7429772 — https://www.pexels.com/photo/7429772/ | open bowling |
+| `t-parties` | Pexels 11522856 — https://www.pexels.com/photo/11522856/ | parties |
+| `t-cosmic` | Pexels 12789438 — https://www.pexels.com/photo/12789438/ | cosmic bowling |
+| `t-pro` | Pexels 7429403 — https://www.pexels.com/photo/7429403/ | pro shop |
+| `t-grill` | Pexels 19786209 — https://www.pexels.com/photo/19786209/ | the grill |
+| `food1` | Pexels 33253821 — https://www.pexels.com/photo/33253821/ | burger |
+| `food2` | Pexels 5903317 — https://www.pexels.com/photo/5903317/ | pizza |
+| `food3` | Pexels 19786209 — https://www.pexels.com/photo/19786209/ | wings |
+| `league-hero` | Pexels 7429779 — https://www.pexels.com/photo/7429779/ | league night |
+| `shoes` | Pexels 5952949 — https://www.pexels.com/photo/5952949/ | shoes |
